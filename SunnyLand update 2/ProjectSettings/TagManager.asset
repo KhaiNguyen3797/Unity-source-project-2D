@@ -9,6 +9,7 @@ TagManager:
   - Edge
   - Enemy
   - Bullet
+  - Userable
   layers:
   - Default
   - TransparentFX

@@ -18,23 +18,28 @@ public class Player : Character
         }
     }
 
+    private IUseable useable;
+
     [SerializeField] public float jumpForce = 700f;
     [SerializeField] public Collider2D crouchDisable;
     [SerializeField] public Transform[] groundCheck;
     [SerializeField] public LayerMask whatisGround;
     [SerializeField] public GameObject Bum;
     const float groundRadius = .2f;
+    [SerializeField]
+    public float climpSpeed;
 
     public Rigidbody2D r2 { get; set; }
     public bool grounded { get; set; }
     public bool crouched { get; set; }
     public bool jumping { get; set; }
-
+    public bool Onladder { get; set; }
 
     // Start is called before the first frame update
     public override void Start()
     {
         base.Start();
+        Onladder = false;
         r2 = GetComponent<Rigidbody2D>();
     }
 
@@ -47,15 +52,16 @@ public class Player : Character
     void FixedUpdate()
     {
         float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
         bool wasground = grounded;
         grounded = CheckGround(wasground);
-        HandleMovement(h);
+        HandleMovement(h, v);
         OnJumpWeight();
         Flip(h);
         jumping = false;
     }
 
-    public void HandleMovement(float horizontal)
+    public void HandleMovement(float horizontal, float vertical)
     {
         if (r2.velocity.y < 0)
         {
@@ -66,7 +72,7 @@ public class Player : Character
 
         anim.SetFloat("Speed", Mathf.Abs(horizontal));
 
-        if(grounded && jumping)
+        if(grounded && jumping && !Onladder)
         {
             grounded = false;
             jumping = false;
@@ -91,6 +97,12 @@ public class Player : Character
             }
             anim.SetBool("Crouching", false);
         }
+
+        if (Onladder)
+        {
+            anim.speed = vertical != 0 ? Mathf.Abs(vertical) : Mathf.Abs(horizontal);
+            r2.velocity = new Vector2(horizontal * climpSpeed, vertical * climpSpeed);
+        }
     }
 
     private void HandleInput()
@@ -107,6 +119,12 @@ public class Player : Character
         {
             crouched = false;
         }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            Use();
+        }
+
     }
 
     private bool CheckGround(bool wasground)
@@ -129,6 +147,14 @@ public class Player : Character
             }
         }
         return false;
+    }
+
+   private void Use()
+    {
+        if(useable != null)
+        {
+            useable.Use();
+        }
     }
 
     private void Flip(float horizontal)
@@ -165,7 +191,7 @@ public class Player : Character
                 if(point.normal.y >= 0.9f)
                 {
                     enemy.Damage();
-                    r2.velocity = Vector2.up * 10;
+                    r2.velocity = Vector2.up * 12;
                 }
                 else
                 {
@@ -179,12 +205,41 @@ public class Player : Character
         {
             Damage();
         }
+
+        if(target.collider.tag == "Platforms")
+        {
+            transform.parent = target.transform;
+        }
     }
-    
+
+    private void OnCollisionExit2D(Collision2D target)
+    {
+        if (target.collider.tag == "Platforms")
+        {
+            transform.parent = null;
+        }
+    }
+
     private void Damage()
     {
         heath -= 1;
         anim.SetTrigger("DamageHurt");
-        r2.velocity = Vector2.up * 10;
+        r2.velocity = Vector2.up * 12;
+    }
+
+    public void OnTriggerEnter2D(Collider2D col)
+    {
+        if(col.tag == "Userable")
+        {
+            useable = col.GetComponent<IUseable>();
+        }
+    }
+
+    public void OnTriggerExit2D(Collider2D col)
+    {
+        if(col.tag == "Userable")
+        {
+            useable = null;
+        }
     }
 }

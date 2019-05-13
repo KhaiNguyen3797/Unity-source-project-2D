@@ -14,7 +14,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &5565631924650978298
 Transform:
@@ -44,12 +44,13 @@ GameObject:
   - component: {fileID: 870100977153998911}
   - component: {fileID: 870100977153998896}
   - component: {fileID: 870100977153998897}
+  - component: {fileID: -1120510984105054332}
   m_Layer: 11
   m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &870100977676382271
 Transform:
@@ -190,6 +191,20 @@ MonoBehaviour:
   bullet: {fileID: 2152388165521621426, guid: 199b133ca4995c24ca511208818dbb51, type: 3}
   Bum: {fileID: 2897726314175452162, guid: 8d178368f26c53845be5ebf1aacbc7c1, type: 3}
   r2: {fileID: 0}
+--- !u!114 &-1120510984105054332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 870100977153998898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 350e3abd031509d4384dcc2bb8f2cf89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  other:
+  - {fileID: 870100977153998896}
 --- !u!1 &870100978059987100
 GameObject:
   m_ObjectHideFlags: 0
@@ -206,7 +221,7 @@ GameObject:
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &870100978059987099
 Transform:
@@ -275,7 +290,7 @@ GameObject:
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &870100978526246570
 Transform:

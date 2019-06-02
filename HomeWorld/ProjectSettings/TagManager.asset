@@ -7,6 +7,10 @@ TagManager:
   - Ladder
   - Ground
   - Box
+  - GroundPlat
+  - Enemy
+  - Gem
+  - Cherry
   layers:
   - Default
   - TransparentFX
@@ -20,9 +24,9 @@ TagManager:
   - Ladder
   - Player
   - Box
-  - 
-  - 
-  - 
+  - GroundPlat
+  - Enemy
+  - Item
   - 
   - 
   - 

@@ -4,19 +4,68 @@ using UnityEngine;
 
 public class Eagle : MonoBehaviour
 {
-    [SerializeField] public Transform pointFly;
-    [SerializeField] public Transform pointFly2;
-    [SerializeField] public float speedFly;
+    public float flySpeed;
+    public Transform flyStartPos;
+    public Transform flyEndPos;
 
+    private bool returnFly;
+    private Rigidbody2D r2;
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = pointFly.transform.position;
+        r2 = GetComponent<Rigidbody2D>();
+        transform.position = flyStartPos.position;
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        transform.position = Vector3.MoveTowards(transform.position, pointFly2.transform.position, speedFly*Time.deltaTime);
+        var dis = (transform.position - flyStartPos.position).sqrMagnitude;
+        var disReturn = (transform.position - flyEndPos.position).sqrMagnitude;
+        if(dis < 0.01)
+        {
+            returnFly = false;
+        }
+        if(disReturn < 0.01)
+        {
+            returnFly = true;
+        }
+
+        Flip();
+
+        if (returnFly)
+        {
+            transform.position = Vector3.MoveTowards(r2.position, flyStartPos.position, flySpeed * Time.deltaTime);
+        }
+        else
+        {
+            transform.position = Vector3.MoveTowards(r2.position, flyEndPos.position, flySpeed * Time.deltaTime);
+        }
+    }
+
+    private void Flip()
+    {
+        if ((flyEndPos.position.x < flyStartPos.position.x))
+        {
+            if (returnFly)
+            {
+                transform.localScale = new Vector3(-1, 1, 1);
+            }
+            else
+            {
+                transform.localScale = new Vector3(1, 1, 1);
+            }
+        }
+        else
+        {
+            if (returnFly)
+            {
+                transform.localScale = new Vector3(1, 1, 1);
+            }
+            else
+            {
+                transform.localScale = new Vector3(-1, 1, 1);
+            }
+        }
     }
 }

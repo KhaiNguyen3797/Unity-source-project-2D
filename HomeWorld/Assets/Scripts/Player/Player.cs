@@ -5,17 +5,19 @@ using UnityEngine;
 
 public class Player : character
 {
+    [SerializeField] public Vector3 ladderPosition;
     [SerializeField] public LayerMask whatIsGround;
     [SerializeField] public Collider2D croundCollider;
     [SerializeField] public Transform checkGround;
-    [SerializeField] public Vector3 ladderPosition;
-    [SerializeField] public Transform smoke;
-    [Range(0,3)] [SerializeField] private float resetPlunge = 3;
-    [SerializeField] public float climbSpeed;
     [SerializeField] public Ghost ghost;
+    [Range(0, 3)] [SerializeField] private float resetPlunge = 3;
+    [SerializeField] public float climbSpeed;
     private const float groundRadius = 0.2f;
     private float timeLadder = 0.5f;
     private float forcePlunge;
+    public float knockback;
+    public float knockbackLengt;
+    public float knockbackCount;
 
     private bool gravityS;
     private bool jump;
@@ -23,17 +25,18 @@ public class Player : character
     public bool grounded;
     public bool climb;
     public bool ladder;
-
+    public bool knockFormRight;
 
     private Rigidbody2D r2;
+    private Animator anim;
 
     // Start is called before the first frame update
     public override void Start()
     {
         base.Start();
         r2 = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
         faceRight = true;
-        //smoke.transform.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -70,15 +73,26 @@ public class Player : character
 
     private void Move(float horizontal, float vertical)
     {
-        r2.velocity = new Vector2(moveSpeed * horizontal, r2.velocity.y);
-        if((horizontal > 0 || horizontal < 0) && grounded && !crouch)
+        if (knockbackCount <= 0)
         {
-            smoke.transform.gameObject.SetActive(true);
+            r2.velocity = new Vector2(moveSpeed * horizontal, r2.velocity.y);
+            anim.SetBool("Damage", false);
         }
-        else if(horizontal == 0 || !grounded)
+        else
         {
-            smoke.transform.gameObject.SetActive(false);
+            if (knockFormRight)
+            {
+                r2.velocity = new Vector2(-knockback, knockback);
+                anim.SetBool("Damage", true);
+            }
+            else
+            {
+                r2.velocity = new Vector2(knockback, knockback);
+                anim.SetBool("Damage", true);
+            }
+            knockbackCount -= Time.deltaTime;
         }
+
         anim.SetFloat("Speed", Mathf.Abs(horizontal));
 
         if (r2.velocity.y < 0)
@@ -113,6 +127,7 @@ public class Player : character
             }
             transform.position = new Vector3(ladderPosition.x, transform.position.y, transform.position.z);
         }
+
         if(!climb)
         {
             anim.SetBool("Climb", false);
@@ -146,7 +161,7 @@ public class Player : character
             anim.SetTrigger("Jump");
             jump = false;
             grounded = false;
-            r2.AddForce(new Vector2(0, jumpForce));
+            jumpForcePlayer();
         }
 
         if(crouch && grounded)
@@ -169,6 +184,11 @@ public class Player : character
         }
     }
 
+    public void jumpForcePlayer()
+    {
+        r2.AddForce(new Vector2(0,jumpForce));
+    }
+
     private void OnCollisionEnter2D(Collision2D col)
     {
         if (col.collider.CompareTag("Box"))
@@ -177,6 +197,20 @@ public class Player : character
             {
                 Destroy(col.gameObject);
             }
+        }
+
+        if (col.collider.CompareTag("GroundPlat"))
+        {
+            transform.parent = col.transform;
+        }
+
+    }
+
+    private void OnCollisionExit2D(Collision2D col)
+    {
+        if (col.collider.CompareTag("GroundPlat"))
+        {
+            transform.parent = null;
         }
     }
 

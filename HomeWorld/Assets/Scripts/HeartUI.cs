@@ -1,13 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class CameraFollow : MonoBehaviour
+public class HeartUI : MonoBehaviour
 {
-    public float minX, maxX;
-    public float minY, maxY;
-
+    public Sprite[] HeartSprite;
     public Player player;
+    public Image heartUI;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,6 +17,6 @@ public class CameraFollow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = new Vector3(Mathf.Clamp(player.transform.position.x, minX, maxX), Mathf.Clamp(player.transform.position.y, minY, maxY), transform.position.z);
+        heartUI.sprite = HeartSprite[player.healthOur];
     }
 }

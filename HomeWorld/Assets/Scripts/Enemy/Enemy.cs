@@ -20,10 +20,12 @@ public class Enemy : MonoBehaviour
             if(col.transform.position.x < transform.position.x)
             {
                 player.knockFormRight = true;
+                StartCoroutine(player.DamagePlayer());
             }
             else
             {
                 player.knockFormRight = false;
+                StartCoroutine(player.DamagePlayer());
             }
         }   
     }

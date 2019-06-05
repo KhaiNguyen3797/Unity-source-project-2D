@@ -11,6 +11,8 @@ TagManager:
   - Enemy
   - Gem
   - Cherry
+  - Item
+  - Spikes
   layers:
   - Default
   - TransparentFX

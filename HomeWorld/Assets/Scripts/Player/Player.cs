@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : character
 {
@@ -15,6 +16,8 @@ public class Player : character
     private const float groundRadius = 0.2f;
     private float timeLadder = 0.5f;
     private float forcePlunge;
+    private int healthMax = 5;
+    public float timeImmortal = 0.2f;
     public float knockback;
     public float knockbackLengt;
     public float knockbackCount;
@@ -22,10 +25,12 @@ public class Player : character
     private bool gravityS;
     private bool jump;
     private bool crouch;
+    private bool immortal;
     public bool grounded;
     public bool climb;
     public bool ladder;
     public bool knockFormRight;
+    public int healthOur;
 
     private Rigidbody2D r2;
     private Animator anim;
@@ -37,9 +42,14 @@ public class Player : character
         r2 = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         faceRight = true;
+        healthOur = healthMax;
     }
 
-    // Update is called once per frame
+    private void Update()
+    {
+        HandleInput();
+    }
+
     void FixedUpdate()
     {
         float h = Input.GetAxis("Horizontal");
@@ -47,6 +57,8 @@ public class Player : character
         CheckGround();
         Move(h, v);
     }
+
+    #region CheckGround & CheckHealth
 
     private void CheckGround()
     {
@@ -66,10 +78,27 @@ public class Player : character
         }
     }
 
-    private void Update()
+    public IEnumerator DamagePlayer()
     {
-        HandleInput();
+        if (!immortal)
+        {
+            healthOur -= 1;
+            if (healthOur > 0)
+            {
+                immortal = true;
+                yield return new WaitForSeconds(timeImmortal);
+                immortal = false;
+            }
+            else
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
+        }
     }
+
+    #endregion
+
+    #region Move
 
     private void Move(float horizontal, float vertical)
     {
@@ -184,10 +213,14 @@ public class Player : character
         }
     }
 
+    #endregion
+
     public void jumpForcePlayer()
     {
         r2.AddForce(new Vector2(0,jumpForce));
     }
+
+    #region Collision
 
     private void OnCollisionEnter2D(Collision2D col)
     {
@@ -213,7 +246,9 @@ public class Player : character
             transform.parent = null;
         }
     }
+    #endregion
 
+    #region Input
     private void HandleInput()
     {
         if (Input.GetKeyDown(KeyCode.Space) && grounded)
@@ -239,4 +274,6 @@ public class Player : character
             gravityS = true;
         }
     }
+
+    #endregion
 }

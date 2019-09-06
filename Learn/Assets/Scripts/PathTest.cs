@@ -13,9 +13,10 @@ public class PathTest : MonoBehaviour
     public Pathtypes Pathtype;
     public int movingTo = 0;
     public int movementDirection = 1;
+    private int saveDirection;
     public bool turnOn = false;
+    public bool nextPoint = false;
     public Transform[] PathPoint;
-
 
     public void OnDrawGizmos()
     {
@@ -59,11 +60,20 @@ public class PathTest : MonoBehaviour
                 {
                     if (movingTo <= 0)
                     {
-                        movementDirection = 1;
+                        saveDirection = 1;
                     }
                     else if (movingTo >= PathPoint.Length - 1)
                     {
+                        saveDirection = -1;
+                    }
+
+                    if(saveDirection < 0)
+                    {
                         movementDirection = -1;
+                    }
+                    else if(saveDirection > 0)
+                    {
+                        movementDirection = 1;
                     }
                 }
             }
